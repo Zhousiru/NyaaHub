@@ -71,10 +71,16 @@ function TorrentTaskList() {
         Failed to get fetcher status
       </div>
     )
+  if (!data.payload || data.payload?.length === 0)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Idle (*/ω＼*)
+      </div>
+    )
 
   return (
     <div className="flex flex-col gap-5 mt-10 max-w-4xl">
-      {data.payload.map((status: any) => (
+      {data.payload?.map((status: any) => (
         <TorrentTaskEntry status={status} key={status.id}></TorrentTaskEntry>
       ))}
     </div>
