@@ -6,7 +6,7 @@ dayjs.extend(duration)
 
 function TorrentTaskEntry({ status }: { status: any }) {
   let humanizedEta = 'N/A'
-  if (status.eta > 0) {
+  if (status.eta >= 0) {
     humanizedEta = dayjs
       .duration(status.eta, 'seconds')
       .format('H [hrs] m[mins] ss[secs]')
