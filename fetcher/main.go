@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	"github.com/Zhousiru/NyaaHub/fetcher/lib/api"
-	"github.com/Zhousiru/NyaaHub/fetcher/lib/bt"
 	"github.com/Zhousiru/NyaaHub/fetcher/lib/config"
+	"github.com/Zhousiru/NyaaHub/fetcher/lib/watcher"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	api.StartApi(wg)
 	log.Println("main: NyaaHub Fetcher API is listening on", config.FetcherApiListen)
 
-	bt.StartWatch(wg)
+	watcher.StartWatcher(wg)
 	log.Println("main: NyaaHub Fetcher Watcher is running")
 
 	wg.Wait()
