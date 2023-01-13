@@ -1,0 +1,9 @@
+{
+  "collection": "不當哥哥了！",
+  "config": {
+    "rss": "https://nyaa.si/?page=rss&q=[NC-Raws]%20%E4%B8%8D%E7%95%B6%E5%93%A5%E5%93%A5%E4%BA%86%EF%BC%81%20Baha",
+    "cron": "35 23 * * 4",
+    "expire": "30d"
+  },
+  "lastUpdate": "Thu, 12 Jan 2023 15:31:09 -0000"
+}
