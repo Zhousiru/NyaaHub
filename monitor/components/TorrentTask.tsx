@@ -69,7 +69,7 @@ function humanizeEta(eta: number): string {
   }
 
   const etaStr = dayjs.duration(eta, 'seconds').format('H,m,s')
-  const [h, m, s] = etaStr.split(',')
+  const [h, m, s] = etaStr.split(',').map((x) => Number(x))
 
   return (h ? `${h} h ` : '') + (m ? `${m} min ` : '') + `${s} s`
 }
@@ -93,6 +93,7 @@ function GetStatusColor(statusCode: number): string {
     case 0:
       return 'bg-orange-100'
     case 5:
+    case 6:
       return 'bg-green-100'
   }
 
@@ -107,31 +108,31 @@ function TorrentTaskEntry({ status }: { status: any }) {
   }
 
   return (
-    <ol className="bg-white p-6 rounded-3xl overflow-hidden relative [&>li]:relative">
+    <ol className="bg-white p-6 md:rounded-3xl overflow-hidden relative [&>li]:relative shadow-md">
       <div
         className={`absolute inset-y-0 left-0 w-12 transition-all ${GetStatusColor(
           status.status
         )}`}
         style={{ width: progress }}
       ></div>
-      <div className="absolute text-4xl bottom-0 right-0 p-5 text-gray-300/50">
+      <div className="hidden sm:block absolute text-4xl bottom-0 right-0 p-5 text-gray-300/50 mix-blend-multiply">
         {SimplifyStatus(status.status)}
       </div>
       <li>
         <Badge className="bg-slate-500">{status.collection}</Badge>
       </li>
       <li className="text-xl break-all my-3">{status.name}</li>
-      <li className="mb-3">
+      <li className="mb-3 flex gap-1 flex-wrap">
         <Badge className="bg-teal-700 text-xs">
           ETA: {humanizeEta(status.eta)}
         </Badge>
-        <Badge className="bg-lime-700 ml-2 text-xs">
+        <Badge className="bg-lime-700 text-xs">
           DOWN: {prettyBytes(status.rateDownload)}/s
         </Badge>
-        <Badge className="bg-amber-700 ml-2 text-xs">
+        <Badge className="bg-amber-700 text-xs">
           UP: {prettyBytes(status.rateUpload)}/s
         </Badge>
-        <Badge className="bg-blue-700 ml-2 text-xs">
+        <Badge className="bg-blue-700 text-xs">
           SIZE: {prettyBytes(status.sizeWhenDone / 8)}
         </Badge>
       </li>
@@ -173,7 +174,7 @@ function TorrentTaskList() {
     )
 
   return (
-    <div className="flex flex-col gap-5 mt-10 max-w-4xl">
+    <div className="flex flex-col gap-5 mt-10 md:w-11/12 lg:max-w-5xl">
       {data.payload?.map((status: any) => (
         <TorrentTaskEntry status={status} key={status.id}></TorrentTaskEntry>
       ))}
