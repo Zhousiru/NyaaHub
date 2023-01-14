@@ -48,7 +48,8 @@ func GetStatus() ([]transmissionrpc.Torrent, error) {
 		[]string{
 			"id", "name", "eta", "magnetLink",
 			"addedDate", "files", "percentDone", "downloadDir",
-			"peersConnected", "sizeWhenDone", "status",
+			"peersConnected", "sizeWhenDone", "status", "rateDownload",
+			"rateUpload",
 		},
 		nil,
 	)

@@ -2,8 +2,10 @@ package api
 
 import (
 	"net/http"
+	"path/filepath"
 
 	"github.com/Zhousiru/NyaaHub/fetcher/lib/bt"
+	"github.com/Zhousiru/NyaaHub/fetcher/lib/config"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,12 +27,26 @@ func handleStatus(c *gin.Context) {
 	var payload []map[string]interface{}
 
 	for _, t := range torrents {
-		payload = append(payload, trimNil(t))
+		collection, err := filepath.Rel(
+			config.BTDownloadDir,
+			*t.DownloadDir,
+		)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, resp{
+				Payload: nil,
+				Msg:     "failed to get colletion by relpath: " + err.Error(),
+			})
+			return
+		}
+
+		trimed := trimNil(t)
+		trimed["collection"] = collection
+		payload = append(payload, trimed)
 	}
 
 	c.JSON(http.StatusOK, resp{
 		Payload: payload,
-		Msg:     "",
+		Msg:     "ok",
 	})
 }
 
@@ -57,6 +73,6 @@ func handleAdd(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp{
 		Payload: nil,
-		Msg:     "",
+		Msg:     "ok",
 	})
 }
