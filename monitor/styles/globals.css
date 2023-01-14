@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  @apply selection:bg-yellow-300/50;
+}
+
 body {
   @apply bg-gray-100;
 }

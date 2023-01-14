@@ -1,54 +1,148 @@
 import dayjs from 'dayjs'
 import useSWR from 'swr'
+import prettyBytes from 'pretty-bytes'
+import { PropsWithChildren } from 'react'
 
 import duration from 'dayjs/plugin/duration'
+import utc from 'dayjs/plugin/utc'
 dayjs.extend(duration)
+dayjs.extend(utc)
 
-function TorrentTaskEntry({ status }: { status: any }) {
-  let humanizedEta = 'N/A'
-  if (status.eta >= 0) {
-    humanizedEta = dayjs
-      .duration(status.eta, 'seconds')
-      .format('H [hrs] m[mins] ss[secs]')
-  }
+function humanizeStatus(statusCode: Number): string {
+  let humanized = 'Unknown'
 
-  let humanizedStatus = 'Unknown'
-  switch (status.status) {
+  switch (statusCode) {
     case 0:
-      humanizedStatus = 'Stopped'
+      humanized = 'Stopped'
       break
     case 1:
-      humanizedStatus = 'Queued to Verify Local Data'
+      humanized = 'Queued to Verify Local Data'
       break
     case 2:
-      humanizedStatus = 'Verifying Local Data'
+      humanized = 'Verifying Local Data'
       break
     case 3:
-      humanizedStatus = 'Queued to Download'
+      humanized = 'Queued to Download'
       break
     case 4:
-      humanizedStatus = 'Downloading'
+      humanized = 'Downloading'
       break
     case 5:
-      humanizedStatus = 'Queued to Seed (Uploading)'
+      humanized = 'Queued to Seed (Uploading)'
       break
     case 6:
-      humanizedStatus = 'Seeding (Uploading)'
+      humanized = 'Seeding (Uploading)'
       break
+  }
+
+  return humanized
+}
+
+function SimplifyStatus(statusCode: Number): string {
+  let simplified = 'Unknown'
+
+  switch (statusCode) {
+    case 0:
+      simplified = 'Stopped'
+      break
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      simplified = 'Downloading'
+      break
+    case 5:
+    case 6:
+      simplified = 'Uploading'
+      break
+  }
+
+  return simplified.toUpperCase()
+}
+
+function humanizeEta(eta: number): string {
+  if (eta < 0) {
+    return 'N/A'
+  }
+  if (eta === 0) {
+    return `Soon`
+  }
+
+  const etaStr = dayjs.duration(eta, 'seconds').format('H,m,s')
+  const [h, m, s] = etaStr.split(',')
+
+  return (h ? `${h} h ` : '') + (m ? `${m} min ` : '') + `${s} s`
+}
+
+function humanizeProgress(percentDone: number): string {
+  return Number(percentDone * 100).toFixed(2) + '%'
+}
+
+function Badge(props: PropsWithChildren<{ className: string }>) {
+  return (
+    <span
+      className={`inline-block text-white rounded-lg py-1 px-2 ${props.className}`}
+    >
+      {props.children}
+    </span>
+  )
+}
+
+function GetStatusColor(statusCode: number): string {
+  switch (statusCode) {
+    case 0:
+      return 'bg-orange-100'
+    case 5:
+      return 'bg-green-100'
+  }
+
+  return 'bg-blue-100'
+}
+
+function TorrentTaskEntry({ status }: { status: any }) {
+  const progress = humanizeProgress(status.percentDone)
+
+  function DetailList(props: PropsWithChildren) {
+    return <li className={`text-gray-600`}>{props.children}</li>
   }
 
   return (
-    <div className="bg-white p-6 rounded-3xl">
-      <ol>
-        <li className="text-xl break-all">{status.name}</li>
-        <li className="mt-2 opacity-60">
-          Progress: {Number(status.percentDone * 100).toFixed(2)}%
-        </li>
-        <li className="opacity-60">ETA: {humanizedEta}</li>
-        <li className="opacity-60">Peers Connected: {status.peersConnected}</li>
-        <li className="opacity-60">Status: {humanizedStatus}</li>
-      </ol>
-    </div>
+    <ol className="bg-white p-6 rounded-3xl overflow-hidden relative [&>li]:relative">
+      <div
+        className={`absolute inset-y-0 left-0 w-12 transition-all ${GetStatusColor(
+          status.status
+        )}`}
+        style={{ width: progress }}
+      ></div>
+      <div className="absolute text-4xl bottom-0 right-0 p-5 text-gray-300/50">
+        {SimplifyStatus(status.status)}
+      </div>
+      <li>
+        <Badge className="bg-slate-500">{status.collection}</Badge>
+      </li>
+      <li className="text-xl break-all my-3">{status.name}</li>
+      <li className="mb-3">
+        <Badge className="bg-teal-700 text-xs">
+          ETA: {humanizeEta(status.eta)}
+        </Badge>
+        <Badge className="bg-lime-700 ml-2 text-xs">
+          DOWN: {prettyBytes(status.rateDownload)}/s
+        </Badge>
+        <Badge className="bg-amber-700 ml-2 text-xs">
+          UP: {prettyBytes(status.rateUpload)}/s
+        </Badge>
+        <Badge className="bg-blue-700 ml-2 text-xs">
+          SIZE: {prettyBytes(status.sizeWhenDone / 8)}
+        </Badge>
+      </li>
+      <DetailList>Progress: {progress}</DetailList>
+      <DetailList>Peers Connected: {status.peersConnected}</DetailList>
+      <DetailList>
+        Added Date:{' '}
+        {dayjs.utc(status.addedDate).local().format('YYYY-MM-DD HH:mm:ss')}
+      </DetailList>
+      <DetailList>Status: {humanizeStatus(status.status)}</DetailList>
+    </ol>
   )
 }
 
