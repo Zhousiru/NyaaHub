@@ -20,11 +20,11 @@ type NewTask struct {
 }
 
 type TaskConfig struct {
-	Rss          string        `json:"rss"`
-	Cron         string        `json:"cron"`
-	CronTimeZone string        `json:"cronTimeZone"`
-	MaxDownload  int           `json:"maxDownload"`
-	Timeout      time.Duration `json:"timeout"`
+	Rss          string `json:"rss"`
+	Cron         string `json:"cron"`
+	CronTimeZone string `json:"cronTimeZone"`
+	MaxDownload  int    `json:"maxDownload"`
+	Timeout      int    `json:"timeout"`
 }
 
 func AddTask(task NewTask) error {
@@ -99,6 +99,42 @@ func GetAllTaskPagination(limit int, afterCollection string) ([]*Task, error) {
 	defer rows.Close()
 
 	return dumpTaskList(rows)
+}
+
+func UpdateTaskConfig(collection string, new TaskConfig) error {
+	taskConfigBytes, err := json.Marshal(new)
+	if err != nil {
+		return err
+	}
+	taskConfig := string(taskConfigBytes)
+
+	_, err = client.Exec(`
+	UPDATE "task"
+	SET "config" = ?
+	WHERE "collection" = ?;
+	`, taskConfig, collection)
+
+	return err
+}
+
+func IncreaseTaskDownloadedCount(collection string, n int) error {
+	_, err := client.Exec(`
+	UPDATE "task"
+	SET "downloaded" = "downloaded" + ?
+	WHERE "collection" = ?;
+	`, n, collection)
+
+	return err
+}
+
+func UpdateTaskLastUpdateDate(collection string) error {
+	_, err := client.Exec(`
+	UPDATE "task"
+	SET "lastUpdate" = ?
+	WHERE "collection" = ?;
+	`, time.Now().UTC(), collection)
+
+	return err
 }
 
 func dumpTaskList(rows *sql.Rows) ([]*Task, error) {
