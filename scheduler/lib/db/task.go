@@ -74,6 +74,17 @@ func RemoveTask(collection string) error {
 	return err
 }
 
+func GetAllTask() ([]*Task, error) {
+	rows, err := client.Query(`SELECT * FROM "task"`)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	return dumpTaskList(rows)
+}
+
 func GetAllTaskPagination(limit int, afterCollection string) ([]*Task, error) {
 	rows, err := client.Query(`
 	SELECT * FROM "task"
@@ -87,6 +98,10 @@ func GetAllTaskPagination(limit int, afterCollection string) ([]*Task, error) {
 
 	defer rows.Close()
 
+	return dumpTaskList(rows)
+}
+
+func dumpTaskList(rows *sql.Rows) ([]*Task, error) {
 	var taskList []*Task
 
 	for rows.Next() {
