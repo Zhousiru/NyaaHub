@@ -95,7 +95,7 @@ export function TaskCard(props: { data: Task }) {
           </List>
         </CardBody>
         <CardFooter>
-          <ButtonGroup>
+          <ButtonGroup display={{ base: 'none', md: 'flex' }}>
             <Button onClick={onEditOpen} leftIcon={<EditIcon></EditIcon>}>
               Edit
             </Button>
@@ -104,10 +104,20 @@ export function TaskCard(props: { data: Task }) {
               colorScheme="red"
               variant="outline"
               onClick={deleteTask}
-              ml={2}
               leftIcon={<DeleteIcon></DeleteIcon>}
             >
               Delete
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup display={{ base: 'flex', md: 'none' }}>
+            <Button onClick={onEditOpen}>
+              <EditIcon></EditIcon>
+            </Button>
+            <Button>
+              <ViewIcon></ViewIcon>
+            </Button>
+            <Button colorScheme="red" variant="outline" onClick={deleteTask}>
+              <DeleteIcon></DeleteIcon>
             </Button>
           </ButtonGroup>
         </CardFooter>

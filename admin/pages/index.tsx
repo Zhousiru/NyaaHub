@@ -91,8 +91,8 @@ export default function Home() {
       <Center>
         <VStack
           spacing={4}
-          mt="10vh"
-          width="clamp(300px, 80vw, 900px)"
+          my="10vh"
+          width="clamp(350px, 80vw, 900px)"
           align="stretch"
         >
           <Card>
@@ -110,8 +110,16 @@ export default function Home() {
                       colorScheme="blue"
                       onClick={onNewOpen}
                       leftIcon={<AddIcon></AddIcon>}
+                      display={{ base: 'none', md: 'flex' }}
                     >
                       New Task
+                    </Button>
+                    <Button
+                      colorScheme="blue"
+                      onClick={onNewOpen}
+                      display={{ base: 'flex', md: 'none' }}
+                    >
+                      <AddIcon></AddIcon>
                     </Button>
                   </ButtonGroup>
                 </Box>
