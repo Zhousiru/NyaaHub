@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -42,7 +41,6 @@ func init() {
 
 	// TODO: Support multiple fetcher
 	fetcherConfigSplit := strings.Split(os.Getenv("FETCHER_CONFIG"), "|")
-	fmt.Println(fetcherConfigSplit)
 	FetcherConfig = &Fetcher{
 		ApiUrl: fetcherConfigSplit[0],
 		Token:  fetcherConfigSplit[1],
