@@ -11,8 +11,8 @@ import (
 	"github.com/Zhousiru/NyaaHub/scheduler/lib/util"
 )
 
-func CheckUpdate(collection string) {
-	logger.Info(collection, "start by cronjob")
+func checkUpdate(collection string) {
+	logger.Info(collection, "started by cron job")
 
 	// Check lifespan
 	logger.Info(collection, "check lifespan")

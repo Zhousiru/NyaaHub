@@ -8,15 +8,15 @@ import (
 )
 
 type Task struct {
-	Collection string
-	Config     TaskConfig
-	Downloaded int
-	LastUpdate time.Time
+	Collection string     `json:"collection"`
+	Config     TaskConfig `json:"config"`
+	Downloaded int        `json:"download"`
+	LastUpdate time.Time  `json:"lastUpdate"`
 }
 
 type NewTask struct {
-	Collection string
-	Config     TaskConfig
+	Collection string     `json:"collection"`
+	Config     TaskConfig `json:"config"`
 }
 
 type TaskConfig struct {
