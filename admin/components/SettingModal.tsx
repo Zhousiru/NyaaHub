@@ -18,7 +18,11 @@ interface Setting {
   token: string
 }
 
-export function SettingModal(props: { isOpen: boolean; onClose: () => void }) {
+export function SettingModal(props: {
+  isOpen: boolean
+  onClose: () => void
+  onRefresh: () => void
+}) {
   const [setting, setSetting] = useState<Setting>({ apiUrl: '', token: '' })
 
   useEffect(() => {
@@ -34,6 +38,7 @@ export function SettingModal(props: { isOpen: boolean; onClose: () => void }) {
     localStorage.setItem('apiUrl', setting.apiUrl)
     localStorage.setItem('token', setting.token)
     props.onClose()
+    props.onRefresh()
     toast({
       title: 'Updated',
       status: 'success',

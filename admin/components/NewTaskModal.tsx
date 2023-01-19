@@ -83,7 +83,7 @@ export function NewTaskModal(props: {
         <ModalFooter>
           <ButtonGroup>
             <Button colorScheme="blue" onClick={submit}>
-              Update
+              Submit
             </Button>
             <Button onClick={cancel}>Cancel</Button>
           </ButtonGroup>

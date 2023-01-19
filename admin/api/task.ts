@@ -1,12 +1,13 @@
 import { NewTask, Task, TaskConfig } from './types'
 
-const apiUrl =
-  typeof window === 'undefined' ? '' : localStorage.getItem('apiUrl') ?? ''
-const token =
-  typeof window === 'undefined' ? '' : localStorage.getItem('token') ?? ''
+const apiUrl = () => localStorage.getItem('apiUrl') ?? ''
+const token = () => localStorage.getItem('token') ?? ''
 
 const withQuery = (path: string, q?: Record<string, string>) =>
-  apiUrl + path + '?' + new URLSearchParams({ token: token, ...q }).toString()
+  apiUrl() +
+  path +
+  '?' +
+  new URLSearchParams({ token: token(), ...q }).toString()
 
 async function listTask(
   limit: number,

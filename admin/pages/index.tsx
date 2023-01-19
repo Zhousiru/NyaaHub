@@ -39,6 +39,7 @@ export default function Home() {
         setTaskList(el.list)
       })
       .catch((err) => {
+        setTaskList(undefined)
         toast({
           title: 'Failed to load data',
           description: err.message,
@@ -123,6 +124,7 @@ export default function Home() {
       <SettingModal
         isOpen={isSettingOpen}
         onClose={onSettingClose}
+        onRefresh={refresh}
       ></SettingModal>
 
       <Center>
