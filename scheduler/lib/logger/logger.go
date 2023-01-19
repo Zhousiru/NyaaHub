@@ -1,13 +1,13 @@
 package logger
 
-import "fmt"
+import (
+	"github.com/Zhousiru/NyaaHub/scheduler/lib/db"
+)
 
 func Error(collection, msg string) {
-	// TODO
-	fmt.Println("[ ERR! ] [", collection, "]", msg)
+	db.AddLog(collection, db.LogTypeErr, msg)
 }
 
 func Info(collection, msg string) {
-	// TODO
-	fmt.Println("[ INFO ] [", collection, "]", msg)
+	db.AddLog(collection, db.LogTypeInfo, msg)
 }

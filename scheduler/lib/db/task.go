@@ -54,7 +54,7 @@ func GetTask(collection string) (*Task, error) {
 		collection,
 	)
 
-	return unmarshalRow(row)
+	return unmarshalTaskRow(row)
 }
 
 func ExistTask(collection string) (bool, error) {
@@ -141,7 +141,7 @@ func dumpTaskList(rows *sql.Rows) ([]*Task, error) {
 	var taskList []*Task
 
 	for rows.Next() {
-		task, err := unmarshalRow(rows)
+		task, err := unmarshalTaskRow(rows)
 		if err != nil {
 			return nil, err
 		}
@@ -151,11 +151,7 @@ func dumpTaskList(rows *sql.Rows) ([]*Task, error) {
 	return taskList, nil
 }
 
-type rowScanner interface {
-	Scan(dest ...interface{}) error
-}
-
-func unmarshalRow(row rowScanner) (*Task, error) {
+func unmarshalTaskRow(row rowScanner) (*Task, error) {
 	ret := new(Task)
 	var configString string
 

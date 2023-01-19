@@ -63,7 +63,8 @@ func checkUpdate(collection string) {
 
 	// Download RSS updates
 	for _, item := range rssItemList {
-		fetcher.DownloadMagnet(util.GenMagnet(item.Title, item.InfoHash))
+		logger.Info(collection, "download "+item.Title)
+		fetcher.DownloadMagnet(collection, util.GenMagnet(item.Title, item.InfoHash))
 	}
 	db.IncreaseTaskDownloadedCount(collection, listLen)
 	db.UpdateTaskLastUpdateDate(collection)

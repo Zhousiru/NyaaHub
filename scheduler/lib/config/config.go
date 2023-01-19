@@ -1,17 +1,25 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
+
+type Fetcher struct {
+	ApiUrl string
+	Token  string
+}
 
 var (
 	SchedulerApiToken  string
 	SchedulerApiListen string
 	SchedulerApiDebug  string
+	FetcherConfig      *Fetcher
 )
 
 func init() {
@@ -30,5 +38,13 @@ func init() {
 		SchedulerApiDebug = "debug"
 	} else {
 		SchedulerApiDebug = "release"
+	}
+
+	// TODO: Support multiple fetcher
+	fetcherConfigSplit := strings.Split(os.Getenv("FETCHER_CONFIG"), "|")
+	fmt.Println(fetcherConfigSplit)
+	FetcherConfig = &Fetcher{
+		ApiUrl: fetcherConfigSplit[0],
+		Token:  fetcherConfigSplit[1],
 	}
 }

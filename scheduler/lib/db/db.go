@@ -12,6 +12,10 @@ import (
 var dbPath string
 var client *sql.DB
 
+type rowScanner interface {
+	Scan(dest ...interface{}) error
+}
+
 func init() {
 	execFile, err := os.Executable()
 	if err != nil {
