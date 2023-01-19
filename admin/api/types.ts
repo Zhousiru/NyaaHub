@@ -1,7 +1,7 @@
 interface Task {
   collection: string
   config: TaskConfig
-  downloaded: number
+  download: number
   lastUpdate: string
 }
 

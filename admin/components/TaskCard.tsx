@@ -1,3 +1,4 @@
+import { removeTask, updateTask } from '@/api/task'
 import { Task, TaskConfig } from '@/api/types'
 import {
   DeleteIcon,
@@ -34,7 +35,8 @@ export function TaskCard(props: { data: Task }) {
     .local()
     .format('YYYY-MM-DD HH:mm:ss')
 
-  const [data, setData] = useState(props.data)
+  const [deleted, setDeleted] = useState<boolean>(false)
+  const [data, setData] = useState<Task>(props.data)
   const {
     isOpen: isEditOpen,
     onOpen: onEditOpen,
@@ -43,23 +45,54 @@ export function TaskCard(props: { data: Task }) {
   const toast = useToast()
 
   function deleteTask() {
-    console.log('debug: delete', props.data.collection)
-    toast({
-      title: 'Deleted',
-      status: 'success',
-    })
+    const loadingToast = toast({ title: 'Loading...', status: 'loading' })
+    removeTask(props.data.collection)
+      .then(() => {
+        setDeleted(true)
+        toast({
+          title: 'Deleted',
+          status: 'success',
+        })
+      })
+      .catch((err) => {
+        toast({
+          title: 'Failed to delete task',
+          description: err.message,
+          status: 'error',
+        })
+      })
+      .finally(() => {
+        toast.close(loadingToast)
+      })
   }
 
   function onEditUpdate(config: TaskConfig) {
+    const loadingToast = toast({ title: 'Loading...', status: 'loading' })
+    updateTask(props.data.collection, config)
+      .then(() => {
+        toast({
+          title: 'Updated',
+          status: 'success',
+        })
+      })
+      .catch((err) => {
+        toast({
+          title: 'Failed to update task',
+          description: err.message,
+          status: 'error',
+        })
+      })
+      .finally(() => {
+        toast.close(loadingToast)
+      })
     setData({
       ...data,
       config,
     })
-    console.log('debug: update', props.data.collection)
-    toast({
-      title: 'Updated',
-      status: 'success',
-    })
+  }
+
+  if (deleted) {
+    return <></>
   }
 
   return (
@@ -86,7 +119,7 @@ export function TaskCard(props: { data: Task }) {
             </ListItem>
             <ListItem>
               <Text as="b">Download: </Text>
-              {data.downloaded} / {data.config.maxDownload}
+              {data.download} / {data.config.maxDownload}
             </ListItem>
             <ListItem>
               <Text as="b">Timeout: </Text>
