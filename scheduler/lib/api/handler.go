@@ -191,7 +191,7 @@ func listTask(c *gin.Context) {
 		return
 	}
 
-	taskList, err := db.GetAllTaskPagination(limit, start)
+	taskList, err := db.GetAllTaskPagination(limit+1, start)
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
@@ -203,10 +203,23 @@ func listTask(c *gin.Context) {
 		return
 	}
 
+	hasNext := true
+	if len(taskList) < limit+1 {
+		hasNext = false
+	}
+
+	respTaskList := taskList
+	if hasNext {
+		respTaskList = taskList[:len(taskList)-1]
+	}
+
 	c.JSON(http.StatusOK,
 		gin.H{
-			"payload": taskList,
-			"msg":     "ok",
+			"payload": gin.H{
+				"list":    respTaskList,
+				"hasNext": hasNext,
+			},
+			"msg": "ok",
 		},
 	)
 }
