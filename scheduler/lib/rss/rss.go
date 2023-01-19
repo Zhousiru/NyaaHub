@@ -11,7 +11,7 @@ import (
 )
 
 func GetRssUpdate(task *db.Task) ([]*RssItem, error) {
-	itemList, err := GetRss(task)
+	itemList, err := GetRss(task.Config.Rss)
 	if err != nil {
 		return nil, err
 	}
@@ -32,8 +32,7 @@ func GetRssUpdate(task *db.Task) ([]*RssItem, error) {
 	return newItemList, nil
 }
 
-func GetRss(task *db.Task) ([]*RssItem, error) {
-	rssUrl := task.Config.Rss
+func GetRss(rssUrl string) ([]*RssItem, error) {
 	res, err := http.Get(rssUrl)
 	if err != nil {
 		return nil, err

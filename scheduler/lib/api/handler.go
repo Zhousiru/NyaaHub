@@ -75,6 +75,9 @@ func addTask(c *gin.Context) {
 		"payload": nil,
 		"msg":     "ok",
 	})
+
+	// TODO: Make it optional
+	cronjob.DownloadPrev(newTask.Collection, newTask.Config.Rss)
 }
 
 func removeTask(c *gin.Context) {

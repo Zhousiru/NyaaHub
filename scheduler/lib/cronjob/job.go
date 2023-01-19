@@ -71,3 +71,24 @@ func checkUpdate(collection string) {
 
 	logger.Info(collection, "all done. exit")
 }
+
+func DownloadPrev(collection string, rssUrl string) {
+	// Get RSS items
+	logger.Info(collection, "started to download previous")
+	logger.Info(collection, "get rss items")
+	rssItemList, err := rss.GetRss(rssUrl)
+	if err != nil {
+		logger.Error(collection, err.Error())
+		return
+	}
+
+	logger.Info(collection, "found "+strconv.Itoa(len(rssItemList))+" item(s)")
+
+	// Download RSS items
+	for _, item := range rssItemList {
+		logger.Info(collection, "download "+item.Title)
+		fetcher.DownloadMagnet(collection, util.GenMagnet(item.Title, item.InfoHash))
+	}
+
+	logger.Info(collection, "all done. exit")
+}
