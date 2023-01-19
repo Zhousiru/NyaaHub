@@ -174,7 +174,7 @@ function TorrentTaskList() {
     )
 
   return (
-    <div className="flex flex-col gap-5 mt-10 md:w-11/12 lg:max-w-5xl">
+    <div className="flex flex-col gap-5 my-10 md:w-11/12 lg:max-w-5xl">
       {data.payload?.map((status: any) => (
         <TorrentTaskEntry status={status} key={status.id}></TorrentTaskEntry>
       ))}
