@@ -19,6 +19,7 @@ func Start() {
 	r.POST("/updateTaskConfig", updateTaskConfig)
 	r.GET("/removeTask", removeTask)
 	r.GET("/listTask", listTask)
+	r.GET("/getLog", getLog)
 
 	go r.Run(config.SchedulerApiListen)
 }
