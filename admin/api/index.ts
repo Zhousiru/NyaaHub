@@ -1,4 +1,7 @@
 import { NewTask, Task, TaskConfig } from './types'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+dayjs.extend(utc)
 
 const apiUrl = () => localStorage.getItem('apiUrl') ?? ''
 const token = () => localStorage.getItem('token') ?? ''
@@ -73,4 +76,28 @@ async function updateTask(collection: string, newConfig: TaskConfig) {
   }
 }
 
-export { listTask, addTask, removeTask, updateTask }
+async function getLog(collection: string): Promise<string> {
+  // TODO: Declare a log interface
+
+  const res = await fetch(withQuery('/getLog', { collection }))
+
+  if (res.status != 200) {
+    throw new Error((await res.json()).msg)
+  }
+
+  const payload = (await res.json()).payload
+
+  let ret = ''
+  for (const log of payload) {
+    const logTime = dayjs
+      .utc(log.time)
+      .local()
+      .format('YYYY-MM-DD HH:mm:ss.SSS')
+
+    ret += `[${logTime}][${log.type}] ${log.msg}\n`
+  }
+
+  return ret
+}
+
+export { listTask, addTask, removeTask, updateTask, getLog }

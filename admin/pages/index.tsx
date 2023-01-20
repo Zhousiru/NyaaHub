@@ -10,7 +10,6 @@ import {
   ButtonGroup,
   useDisclosure,
   useToast,
-  Toast,
 } from '@chakra-ui/react'
 
 import dayjs from 'dayjs'
@@ -22,7 +21,7 @@ import { AddIcon, SettingsIcon } from '@chakra-ui/icons'
 import { SettingModal } from '@/components/SettingModal'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { addTask, listTask } from '@/api/task'
+import { addTask, listTask } from '@/api'
 dayjs.extend(utc)
 
 export default function Home() {

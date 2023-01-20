@@ -1,4 +1,4 @@
-import { removeTask, updateTask } from '@/api/task'
+import { getLog, removeTask, updateTask } from '@/api'
 import { Task, TaskConfig } from '@/api/types'
 import {
   DeleteIcon,
@@ -27,6 +27,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { useState } from 'react'
 import { EditModal } from './EditModal'
+import { LogModal } from './LogModal'
 dayjs.extend(utc)
 
 export function TaskCard(props: { data: Task }) {
@@ -37,11 +38,19 @@ export function TaskCard(props: { data: Task }) {
 
   const [deleted, setDeleted] = useState<boolean>(false)
   const [data, setData] = useState<Task>(props.data)
+  const [log, setLog] = useState<string>('')
+
   const {
     isOpen: isEditOpen,
     onOpen: onEditOpen,
     onClose: onEditClose,
   } = useDisclosure()
+  const {
+    isOpen: isLogOpen,
+    onOpen: onLogOpen,
+    onClose: onLogClose,
+  } = useDisclosure()
+
   const toast = useToast()
 
   function deleteTask() {
@@ -91,6 +100,25 @@ export function TaskCard(props: { data: Task }) {
     })
   }
 
+  function viewLog() {
+    const loadingToast = toast({ title: 'Loading...', status: 'loading' })
+    getLog(props.data.collection)
+      .then((data) => {
+        setLog(data)
+      })
+      .catch((err) => {
+        toast({
+          title: 'Failed to load log',
+          description: err.message,
+          status: 'error',
+        })
+      })
+      .finally(() => {
+        toast.close(loadingToast)
+      })
+    onLogOpen()
+  }
+
   if (deleted) {
     return <></>
   }
@@ -132,7 +160,9 @@ export function TaskCard(props: { data: Task }) {
             <Button onClick={onEditOpen} leftIcon={<EditIcon></EditIcon>}>
               Edit
             </Button>
-            <Button leftIcon={<ViewIcon></ViewIcon>}>View Log</Button>
+            <Button leftIcon={<ViewIcon></ViewIcon>} onClick={viewLog}>
+              View Log
+            </Button>
             <Button
               colorScheme="red"
               variant="outline"
@@ -146,7 +176,7 @@ export function TaskCard(props: { data: Task }) {
             <Button onClick={onEditOpen}>
               <EditIcon></EditIcon>
             </Button>
-            <Button>
+            <Button onClick={onLogOpen}>
               <ViewIcon></ViewIcon>
             </Button>
             <Button colorScheme="red" variant="outline" onClick={deleteTask}>
@@ -161,6 +191,7 @@ export function TaskCard(props: { data: Task }) {
         config={data.config}
         onUpdate={onEditUpdate}
       ></EditModal>
+      <LogModal isOpen={isLogOpen} onClose={onLogClose} log={log}></LogModal>
     </>
   )
 }
