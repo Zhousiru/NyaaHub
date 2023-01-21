@@ -87,9 +87,13 @@ export default function Home() {
     onClose: onSettingClose,
   } = useDisclosure()
 
-  function newTask(data: NewTask) {
+  function newTask(
+    data: NewTask,
+    downloadPrev: boolean,
+    downloadOnly: boolean
+  ) {
     const loadingToast = toast({ title: 'Loading...', status: 'loading' })
-    addTask(data)
+    addTask(data, downloadPrev, downloadOnly)
       .then(() => {
         toast({
           title: 'Added',

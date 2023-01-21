@@ -24,6 +24,19 @@ func addTask(c *gin.Context) {
 		return
 	}
 
+	downloadOnly, _ := strconv.ParseBool(c.Query("downloadOnly"))
+
+	if downloadOnly {
+		cronjob.DownloadPrev(newTask.Collection, newTask.Config.Rss)
+		c.JSON(http.StatusOK, gin.H{
+			"payload": nil,
+			"msg":     "ok",
+		})
+		return
+	}
+
+	downloadPrev, _ := strconv.ParseBool(c.Query("prev"))
+
 	exist, err := db.ExistTask(newTask.Collection)
 	if err != nil {
 		c.JSON(
@@ -76,8 +89,9 @@ func addTask(c *gin.Context) {
 		"msg":     "ok",
 	})
 
-	// TODO: Make it optional
-	cronjob.DownloadPrev(newTask.Collection, newTask.Config.Rss)
+	if downloadPrev {
+		cronjob.DownloadPrev(newTask.Collection, newTask.Config.Rss)
+	}
 }
 
 func removeTask(c *gin.Context) {

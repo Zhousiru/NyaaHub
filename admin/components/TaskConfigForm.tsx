@@ -14,7 +14,7 @@ export function TaskConfigForm(props: {
         name="rss"
         onChange={(event) => props.onChange(event)}
       />
-      <FormLabel mt="1">Cron and time zone</FormLabel>
+      <FormLabel mt="0.5rem">Cron and time zone</FormLabel>
       <HStack>
         <Input
           placeholder="Cron expression"
@@ -30,14 +30,14 @@ export function TaskConfigForm(props: {
           onChange={(event) => props.onChange(event)}
         />
       </HStack>
-      <FormLabel mt="1">Max download</FormLabel>
+      <FormLabel mt="0.5rem">Max download</FormLabel>
       <Input
         type="number"
         value={props.config.maxDownload}
         name="maxDownload"
         onChange={(event) => props.onChange(event)}
       />
-      <FormLabel mt="1">Timeout (days)</FormLabel>
+      <FormLabel mt="0.5rem">Timeout (days)</FormLabel>
       <Input
         type="number"
         value={props.config.timeout}

@@ -2,6 +2,7 @@ import { NewTask } from '@/api/types'
 import {
   Button,
   ButtonGroup,
+  Checkbox,
   FormLabel,
   Input,
   Modal,
@@ -17,7 +18,11 @@ import { TaskConfigForm } from './TaskConfigForm'
 export function NewTaskModal(props: {
   isOpen: boolean
   onClose: () => void
-  onSubmit: (data: NewTask) => void
+  onSubmit: (
+    data: NewTask,
+    downloadPrev: boolean,
+    downloadOnly: boolean
+  ) => void
 }) {
   const [data, setData] = useState<NewTask>({
     collection: '',
@@ -30,6 +35,9 @@ export function NewTaskModal(props: {
     },
   })
 
+  const [downloadOnly, setDownloadOnly] = useState<boolean>(false)
+  const [downloadPrev, setDownloadPrev] = useState<boolean>(true)
+
   useEffect(() => {
     setData({
       collection: '',
@@ -41,6 +49,8 @@ export function NewTaskModal(props: {
         timeout: 30,
       },
     })
+    setDownloadOnly(false)
+    setDownloadPrev(true)
   }, [props.isOpen])
 
   function onConfigChange(event: ChangeEvent<HTMLInputElement>) {
@@ -54,7 +64,7 @@ export function NewTaskModal(props: {
   }
 
   function submit() {
-    props.onSubmit(data)
+    props.onSubmit(data, downloadPrev, downloadOnly)
     props.onClose()
   }
 
@@ -73,12 +83,38 @@ export function NewTaskModal(props: {
             onChange={(event) =>
               setData({ ...data, collection: event.target.value })
             }
-            mb={1}
           ></Input>
-          <TaskConfigForm
-            config={data.config}
-            onChange={onConfigChange}
-          ></TaskConfigForm>
+          <Checkbox
+            my="0.5rem"
+            isChecked={downloadOnly}
+            onChange={(event) => setDownloadOnly(event.target.checked)}
+          >
+            Download only
+          </Checkbox>
+          {downloadOnly ? (
+            <>
+              <FormLabel>RSS URL</FormLabel>
+              <Input
+                value={data.config.rss}
+                name="rss"
+                onChange={(event) => onConfigChange(event)}
+              />
+            </>
+          ) : (
+            <>
+              <TaskConfigForm
+                config={data.config}
+                onChange={onConfigChange}
+              ></TaskConfigForm>
+              <Checkbox
+                mt="0.5rem"
+                isChecked={downloadPrev}
+                onChange={(event) => setDownloadPrev(event.target.checked)}
+              >
+                Download previous items
+              </Checkbox>
+            </>
+          )}
         </ModalBody>
         <ModalFooter>
           <ButtonGroup>

@@ -33,15 +33,25 @@ async function listTask(
   return (await res.json()).payload
 }
 
-async function addTask(task: NewTask) {
+async function addTask(
+  task: NewTask,
+  downloadPrev: boolean,
+  downloadOnly: boolean = false
+) {
   task.config.maxDownload = Number(task.config.maxDownload)
   task.config.timeout = Number(task.config.timeout)
 
-  const res = await fetch(withQuery('/addTask'), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(task),
-  })
+  const res = await fetch(
+    withQuery('/addTask', {
+      prev: String(downloadPrev),
+      downloadOnly: String(downloadOnly),
+    }),
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(task),
+    }
+  )
 
   if (res.status != 200) {
     throw new Error((await res.json()).msg)
