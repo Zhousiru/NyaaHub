@@ -97,6 +97,10 @@ async function getLog(collection: string): Promise<string> {
 
   const payload = (await res.json()).payload
 
+  if (!payload) {
+    throw new Error('log is empty')
+  }
+
   let ret = ''
   for (const log of payload) {
     const logTime = dayjs
