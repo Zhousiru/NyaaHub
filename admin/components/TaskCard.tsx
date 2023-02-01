@@ -176,7 +176,7 @@ export function TaskCard(props: { data: Task }) {
             <Button onClick={onEditOpen}>
               <EditIcon></EditIcon>
             </Button>
-            <Button onClick={onLogOpen}>
+            <Button onClick={viewLog}>
               <ViewIcon></ViewIcon>
             </Button>
             <Button colorScheme="red" variant="outline" onClick={deleteTask}>
