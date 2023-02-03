@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 	"path"
-	"path/filepath"
 	"sync"
 	"time"
 
@@ -53,39 +52,21 @@ func watch() {
 
 				downloadDir := *torrent.DownloadDir
 
-				collection, err := filepath.Rel(
-					config.BTDownloadDir,
-					downloadDir,
-				)
+				collection, err := bt.GetCollection(downloadDir)
 				if err != nil {
 					log.Printf("watcher: failed to get colletion by relpath: %s", err)
 					return
 				}
 
-				uploadWg := new(sync.WaitGroup)
+				log.Println("watcher: uploading:", *torrent.Name)
 
-				for _, f := range torrent.Files {
-					uploadWg.Add(1)
-					go func(file *transmissionrpc.TorrentFile) {
-						defer uploadWg.Done()
-
-						log.Println("watcher: uploading:", file.Name)
-
-						err = storage.Upload(
-							path.Join(downloadDir, file.Name),
-							path.Join(config.RcloneRootDir, collection),
-						)
-
-						if err != nil {
-							log.Printf("watcher: failed to upload to storage: %s", err)
-							return
-						}
-
-						log.Println("watcher: uploaded:", file.Name)
-					}(f)
+				err = storage.UploadDir(downloadDir, path.Join(config.RcloneRootDir, collection))
+				if err != nil {
+					log.Printf("watcher: failed to upload to storage: %s", err)
+					return
 				}
 
-				uploadWg.Wait()
+				log.Println("watcher: uploaded:", *torrent.Name)
 
 				err = bt.RemoveTorrent(*torrent.ID)
 				if err != nil {

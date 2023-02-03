@@ -7,7 +7,7 @@ import (
 	"github.com/Zhousiru/NyaaHub/fetcher/lib/config"
 )
 
-func Upload(localPath, remoteDir string) error {
+func UploadDir(localPath, remoteDir string) error {
 	cmd := exec.Command(
 		"rclone",
 		"--config",
@@ -15,6 +15,8 @@ func Upload(localPath, remoteDir string) error {
 		"copy",
 		localPath,
 		config.RcloneDriver+":"+remoteDir,
+		"--include",
+		"*",
 	)
 
 	output, err := cmd.CombinedOutput()

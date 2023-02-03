@@ -3,7 +3,6 @@ package bt
 import (
 	"context"
 	"log"
-	"path"
 
 	"github.com/Zhousiru/NyaaHub/fetcher/lib/config"
 	"github.com/hekmon/transmissionrpc/v2"
@@ -29,7 +28,7 @@ func init() {
 }
 
 func AddTorrent(magnet, collection string) error {
-	downloadDir := path.Join(config.BTDownloadDir, collection)
+	downloadDir := GetDownloadDir(collection)
 
 	_, err := client.TorrentAdd(
 		context.Background(),

@@ -2,10 +2,8 @@ package api
 
 import (
 	"net/http"
-	"path/filepath"
 
 	"github.com/Zhousiru/NyaaHub/fetcher/lib/bt"
-	"github.com/Zhousiru/NyaaHub/fetcher/lib/config"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,10 +25,7 @@ func handleStatus(c *gin.Context) {
 	var payload []map[string]interface{}
 
 	for _, t := range torrents {
-		collection, err := filepath.Rel(
-			config.BTDownloadDir,
-			*t.DownloadDir,
-		)
+		collection, err := bt.GetCollection(*t.DownloadDir)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, resp{
 				Payload: nil,
