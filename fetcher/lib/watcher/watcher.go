@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -41,6 +43,14 @@ func watch() {
 			}
 
 			if uploading.Contains(*t.ID) {
+				continue
+			}
+
+			relpath, err := filepath.Rel(
+				config.BTDownloadDir,
+				*t.DownloadDir,
+			)
+			if err != nil || strings.HasPrefix(relpath, "../") {
 				continue
 			}
 
