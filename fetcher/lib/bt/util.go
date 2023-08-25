@@ -1,8 +1,10 @@
 package bt
 
 import (
+	"errors"
 	"path"
 	"path/filepath"
+	"regexp"
 	"time"
 
 	"github.com/Zhousiru/NyaaHub/fetcher/lib/config"
@@ -22,5 +24,12 @@ func GetCollection(downloadDir string) (string, error) {
 		return "", err
 	}
 
-	return dirname[:len(dirname)-26], nil
+	re := regexp.MustCompile(`^(.*) \[.*\]$`)
+	sub := re.FindStringSubmatch(dirname)
+
+	if len(sub) < 2 {
+		return "", errors.New("failed to match collection")
+	}
+
+	return sub[1], nil
 }
